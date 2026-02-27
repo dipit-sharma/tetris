@@ -19,7 +19,6 @@
 .arena {
   width: 500px;
   max-width: 800px;
-  border: 2px solid white;
   height: 90vh;
   border-radius: 12px;
 }

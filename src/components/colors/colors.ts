@@ -14,3 +14,19 @@ export const red: TBlock = {
     left: "#ff4d4d",
     right: "#cc0000"
 }
+export const yellow: TBlock = {
+    color: "#ffff00",
+    top: "#ffff80",
+    bottom: "#cccc00",
+    left: "#ffff4d",
+    right: "#cccc00"
+}
+export const green: TBlock = {
+    color: "#00ff00",
+    top: "#80ff80",
+    bottom: "#00cc00",
+    left: "#4dff4d",
+    right: "#00cc00"
+}
+
+export const COLORS = [red, yellow, green]
