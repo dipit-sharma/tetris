@@ -24,6 +24,10 @@
   border-radius: 12px;
 }
 
+.row {
+  display: flex;
+}
+
 @media screen and (max-width: 1000px) {
   .arena {
     width: 100vw;
