@@ -1,0 +1,30 @@
+:root {
+  /* define size variable for block dimensions */
+  --block-size: 50px;
+}
+
+.block {
+  /* ensure width includes border/padding so 10vw really equals 10% of screen */
+  box-sizing: border-box;
+  flex: 0 0 var(--block-size); /* don't shrink or grow */
+  width: var(--block-size);
+  height: var(--block-size);
+  border: 10px solid #333;
+  border-radius: 12px;
+}
+
+@media screen and (max-width: 1000px) {
+  :root {
+    /* each block should be 10% of viewport width */
+    --block-size: 10vw;
+  }
+  .block {
+    box-sizing: border-box;
+    flex: 0 0 var(--block-size);
+    width: var(--block-size);
+    height: var(--block-size);
+    /* border also counts toward the 10vw due to box-sizing above */
+    border: 1vw solid #333;
+    border-radius: 4px;
+  }
+}
