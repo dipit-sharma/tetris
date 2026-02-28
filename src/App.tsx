@@ -57,13 +57,13 @@ function App() {
     setArena(newArena);
   };
 
-  const onDragShape = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    // Implement shape dragging logic here
+  const onDragShape = (e: React.TouchEvent<HTMLDivElement>) => {
+    //e.preventDefault();
+    console.log(e.touches[0].clientX);
   };
 
   const onShapeClick = () => {
-    // Implement shape click logic here
+    console.log("clicked");
   };
 
   const gameLoop = () => {

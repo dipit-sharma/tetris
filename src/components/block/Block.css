@@ -11,6 +11,8 @@
   height: var(--block-size);
   border: 10px solid #333;
   border-radius: 12px;
+  cursor: grab;
+  user-select: none;
 }
 
 @media screen and (max-width: 1000px) {
@@ -26,5 +28,7 @@
     /* border also counts toward the 10vw due to box-sizing above */
     border: 1vw solid #333;
     border-radius: 4px;
+    cursor: grab;
+    user-select: none;
   }
 }
