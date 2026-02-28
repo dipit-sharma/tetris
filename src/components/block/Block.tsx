@@ -1,9 +1,19 @@
 import type { TBlock } from "../types";
 import "./Block.css";
 
-export const Block = ({ color, top, bottom, left, right }: TBlock) => {
+export const Block = ({
+  color,
+  top,
+  bottom,
+  left,
+  right,
+  onDrag,
+  onClick,
+}: TBlock) => {
   return (
     <div
+      onDrag={onDrag}
+      onClick={onClick}
       style={{
         backgroundColor: color,
         borderTopColor: top,

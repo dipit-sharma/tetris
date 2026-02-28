@@ -10,7 +10,7 @@ export const createNewShape = (): TCreateNewShape => {
     const shapes = [RECTANGLE, SQUARE, T_SHAPE];
     return {
         color: COLORS[colorIndex],
-        shape: shapes[shapeIndex],
+        shape: new Array(4).fill(0).map((_, index) => ({ ...shapes[shapeIndex][index] })),
         rotate: ERotate.ZERO,
     };
 };

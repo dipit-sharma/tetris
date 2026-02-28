@@ -9,10 +9,13 @@ import type { TBlock } from "./components/types";
 
 const ARENA_HEIGHT = 15;
 const ARENA_WIDTH = 10;
+const GAME_SPEED = 500;
 
 function App() {
   const [arena, setArena] = useState(
-    Array(ARENA_HEIGHT).fill(Array(ARENA_WIDTH).fill(grey)),
+    Array(ARENA_HEIGHT)
+      .fill(null)
+      .map(() => Array(ARENA_WIDTH).fill(grey)),
   );
 
   const isCenterEmpty = () => {
@@ -33,37 +36,48 @@ function App() {
   };
 
   const moveShapeDown = (shape: TCreateNewShape) => {
+    const newArena = arena.map((row) => [...row]);
     shape.shape.forEach((point) => {
       point.y += 1;
-      arena[point.y][point.x] = shape.color;
-
-      if (point.y - 1 >= 0) {
-        arena[point.y - 1][point.x] = grey;
-      }
+      newArena[point.y][point.x] = shape.color;
     });
 
-    setArena([...arena]);
+    setArena(newArena);
   };
 
   const neutraliseArena = () => {
-    arena.forEach((row, rowIndex) => {
+    const newArena = arena.map((row) => [...row]);
+    newArena.forEach((row, rowIndex) => {
       const isRowFull = row.every((cell: TBlock) => cell.color !== grey.color);
       if (isRowFull) {
-        arena.splice(rowIndex, 1);
-        arena.unshift(Array(ARENA_WIDTH).fill(grey));
+        newArena.splice(rowIndex, 1);
+        newArena.unshift(Array(ARENA_WIDTH).fill(grey));
       }
     });
-    setArena([...arena]);
+    setArena(newArena);
+  };
+
+  const onDragShape = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    // Implement shape dragging logic here
+  };
+
+  const onShapeClick = () => {
+    // Implement shape click logic here
   };
 
   const gameLoop = () => {
     let counter = 0;
-    while (isCenterEmpty() && counter < 5) {
+    while (isCenterEmpty() && counter < 1) {
       const shape: TCreateNewShape = createNewShape();
 
-      while (canMoveDown(shape)) {
-        moveShapeDown(shape);
-      }
+      let timer = setInterval(() => {
+        if (canMoveDown(shape)) {
+          moveShapeDown(shape);
+        } else {
+          clearInterval(timer);
+        }
+      }, GAME_SPEED);
 
       neutraliseArena();
       counter++;
@@ -79,7 +93,12 @@ function App() {
         {arena.map((row, rowIndex) => (
           <div key={rowIndex} className="row">
             {row.map((cell: TBlock, cellIndex: number) => (
-              <Block key={cellIndex} {...cell} />
+              <Block
+                key={cellIndex}
+                {...cell}
+                onClick={onShapeClick}
+                onDrag={onDragShape}
+              />
             ))}
           </div>
         ))}
