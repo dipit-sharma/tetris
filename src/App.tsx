@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import "./App.css";
 import { Block } from "./components/block/Block";
 import { grey } from "./components/colors/colors";
@@ -17,6 +17,8 @@ function App() {
       .fill(null)
       .map(() => Array(ARENA_WIDTH).fill(grey)),
   );
+  const dragStart = useRef(0);
+  const currShape = useRef<TCreateNewShape>(null);
 
   const isCenterEmpty = () => {
     return arena[0][4].color === grey.color && arena[0][5].color === grey.color;
@@ -45,6 +47,58 @@ function App() {
     setArena(newArena);
   };
 
+  const moveShapeLeft = (shape: TCreateNewShape) => {
+    setArena((prev) => {
+      const newArena = prev.map((row) => [...row]);
+      // every point in shape should be > 0 else return
+      const isLeftmost = shape.shape.every((point) => point.x > 0);
+      if (!isLeftmost) {
+        return prev;
+      }
+      shape.shape.forEach((point) => {
+        point.x -= 1;
+        newArena[point.y][point.x] = shape.color;
+
+        newArena[point.y][point.x + 1] = grey;
+      });
+      return newArena;
+    });
+  };
+
+  const moveShapeRight = (shape: TCreateNewShape) => {
+    setArena((prev) => {
+      const newArena = prev.map((row) => [...row]);
+      const isRightmost = shape.shape.every(
+        (point) => point.x < ARENA_WIDTH - 1,
+      );
+      if (!isRightmost) {
+        return prev;
+      }
+      shape.shape.forEach((point) => {
+        point.x += 1;
+        newArena[point.y][point.x] = shape.color;
+
+        newArena[point.y][point.x - 1] = grey;
+      });
+      return newArena;
+    });
+  };
+
+  const onDragShape = (e: React.TouchEvent<HTMLDivElement>) => {
+    //e.preventDefault();
+    console.log(e.touches[0].clientX);
+    // if dragStart.current - e.touches[0].clientX > 50 then move shape right else move shape left
+    if (dragStart.current - e.touches[0].clientX > 50) {
+      moveShapeLeft(currShape.current!);
+    } else if (dragStart.current - e.touches[0].clientX < -50) {
+      moveShapeRight(currShape.current!);
+    }
+  };
+
+  const onDragStart = (e: React.TouchEvent<HTMLDivElement>) => {
+    dragStart.current = e.touches[0].clientX;
+  };
+
   const neutraliseArena = () => {
     const newArena = arena.map((row) => [...row]);
     newArena.forEach((row, rowIndex) => {
@@ -57,11 +111,6 @@ function App() {
     setArena(newArena);
   };
 
-  const onDragShape = (e: React.TouchEvent<HTMLDivElement>) => {
-    //e.preventDefault();
-    console.log(e.touches[0].clientX);
-  };
-
   const onShapeClick = () => {
     console.log("clicked");
   };
@@ -70,6 +119,7 @@ function App() {
     let counter = 0;
     while (isCenterEmpty() && counter < 1) {
       const shape: TCreateNewShape = createNewShape();
+      currShape.current = shape;
 
       let timer = setInterval(() => {
         if (canMoveDown(shape)) {
@@ -98,6 +148,7 @@ function App() {
                 {...cell}
                 onClick={onShapeClick}
                 onDrag={onDragShape}
+                onDragStart={onDragStart}
               />
             ))}
           </div>
