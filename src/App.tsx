@@ -9,7 +9,7 @@ import type { TBlock } from "./components/types";
 
 const ARENA_HEIGHT = 15;
 const ARENA_WIDTH = 10;
-const GAME_SPEED = 500;
+const GAME_SPEED = 1000;
 
 function App() {
   const [arena, setArena] = useState(
@@ -24,27 +24,40 @@ function App() {
     return arena[0][4].color === grey.color && arena[0][5].color === grey.color;
   };
 
-  const canMoveDown = (shape: TCreateNewShape): boolean => {
+  const canMoveDown = (
+    shape: TCreateNewShape,
+    newArena: TBlock[][],
+  ): boolean => {
     for (const point of shape.shape) {
       const { x, y } = point;
       if (y + 1 >= ARENA_HEIGHT) {
         return false;
       }
-      if (arena[y + 1][x].color !== grey.color) {
+      if (y >= 0 && newArena[y + 1][x].color !== grey.color) {
         return false;
       }
     }
     return true;
   };
 
-  const moveShapeDown = (shape: TCreateNewShape) => {
-    const newArena = arena.map((row) => [...row]);
-    shape.shape.forEach((point) => {
-      point.y += 1;
-      newArena[point.y][point.x] = shape.color;
-    });
+  const moveShapeDown = (shape: TCreateNewShape, newArena: TBlock[][]) => {
+    const inArena = shape.shape.every((point) => point.y + 1 < ARENA_HEIGHT);
+    if (!inArena) return;
+    const newArenaCopy = newArena.map((row) => [...row]);
 
-    setArena(newArena);
+    for (const point of shape.shape) {
+      if (point.y >= 0) {
+        newArenaCopy[point.y][point.x] = grey;
+      }
+
+      point.y += 1;
+
+      if (point.y >= 0) {
+        newArenaCopy[point.y][point.x] = shape.color;
+      }
+    }
+    setArena(newArenaCopy);
+    return newArenaCopy;
   };
 
   const moveShapeLeft = (shape: TCreateNewShape) => {
@@ -116,22 +129,29 @@ function App() {
   };
 
   const gameLoop = () => {
-    let counter = 0;
-    while (isCenterEmpty() && counter < 1) {
-      const shape: TCreateNewShape = createNewShape();
-      currShape.current = shape;
+    const spawn = (newArena: TBlock[][]) => {
+      if (!isCenterEmpty()) {
+        return;
+      }
 
-      let timer = setInterval(() => {
-        if (canMoveDown(shape)) {
-          moveShapeDown(shape);
-        } else {
-          clearInterval(timer);
+      const newShape = createNewShape();
+      currShape.current = newShape;
+
+      let newArenaCopy = newArena;
+
+      const interval = setInterval(() => {
+        if (!canMoveDown(newShape, newArena)) {
+          // neutraliseArena();
+          currShape.current = null;
+          spawn(newArenaCopy);
+          clearInterval(interval);
+          return;
         }
+        newArenaCopy = moveShapeDown(newShape, newArena);
       }, GAME_SPEED);
+    };
 
-      neutraliseArena();
-      counter++;
-    }
+    spawn(arena);
   };
 
   return (
