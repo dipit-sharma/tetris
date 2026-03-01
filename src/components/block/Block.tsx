@@ -9,11 +9,13 @@ export const Block = ({
   right,
   onDrag,
   onClick,
+  onDragStart,
 }: TBlock) => {
   return (
     <div
       draggable
       onTouchMove={onDrag}
+      onTouchStart={onDragStart}
       onClick={onClick}
       style={{
         backgroundColor: color,

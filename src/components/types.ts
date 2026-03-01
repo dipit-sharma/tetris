@@ -5,6 +5,7 @@ export type TBlock = {
     left: string;
     right: string;
     onDrag?: (e: React.TouchEvent<HTMLDivElement>) => void;
+    onDragStart?: (e: React.TouchEvent<HTMLDivElement>) => void;
     onClick?: () => void;
 }
 
